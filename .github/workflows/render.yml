@@ -1,6 +1,7 @@
+
 name: Render Motion_as_kit Video
 
-on:
+'on':
 workflow_dispatch:
 
 permissions:
@@ -47,4 +48,5 @@ steps:
     with:
       name: motion-as-code-video
       path: out/motion-as-code.mp4
+      if-no-files-found: error
       retention-days: 3
