@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg chromium
@@ -33,6 +33,10 @@ jobs:
       - name: Install app packages
         working-directory: app
         run: bun install
+
+      - name: Install Playwright Chromium
+        working-directory: app
+        run: bunx playwright@1.63.0 install chromium
 
       - name: Render video
         working-directory: app
