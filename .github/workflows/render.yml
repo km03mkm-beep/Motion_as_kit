@@ -1,52 +1,52 @@
 
 name: Render Motion_as_kit Video
 
-'on':
-workflow_dispatch:
+on:
+  workflow_dispatch:
 
 permissions:
-contents: read
+  contents: read
 
 jobs:
-render:
-runs-on: ubuntu-latest
-timeout-minutes: 360
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
 
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Setup Bun
-    uses: oven-sh/setup-bun@v2
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
-  - name: Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: "3.12"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-  - name: Install dependencies
-    run: |
-      sudo apt-get update
-      sudo apt-get install -y ffmpeg chromium
-      python -m pip install uv
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg chromium
+          python -m pip install uv
 
-  - name: Install app packages
-    working-directory: app
-    run: bun install
+      - name: Install app packages
+        working-directory: app
+        run: bun install
 
-  - name: Render video
-    working-directory: app
-    env:
-      BROWSER_CHANNEL: chromium
-    run: |
-      mkdir -p ../out
-      bun scripts/render.ts video --samples auto --min-samples 4 --max-samples 12 --shutter 0.5 --crf 20 --out ../out/motion-as-code.mp4
+      - name: Render video
+        working-directory: app
+        env:
+          BROWSER_CHANNEL: chromium
+        run: |
+          mkdir -p ../out
+          bun scripts/render.ts video --samples auto --min-samples 4 --max-samples 12 --shutter 0.5 --crf 20 --out ../out/motion-as-code.mp4
 
-  - name: Upload video
-    if: success()
-    uses: actions/upload-artifact@v4
-    with:
-      name: motion-as-code-video
-      path: out/motion-as-code.mp4
-      if-no-files-found: error
-      retention-days: 3
+      - name: Upload video
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: motion-as-code-video
+          path: out/motion-as-code.mp4
+          if-no-files-found: error
+          retention-days: 3
