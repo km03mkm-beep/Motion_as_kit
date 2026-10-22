@@ -27,7 +27,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg chromium
+          sudo apt-get install -y ffmpeg
           python -m pip install uv
 
       - name: Install app packages
@@ -36,7 +36,14 @@ jobs:
 
       - name: Install Playwright Chromium
         working-directory: app
-        run: bunx playwright@1.63.0 install chromium
+        run: bunx playwright@1.63.0 install --with-deps chromium
+
+      - name: Verify Chromium installation
+        working-directory: app
+        run: |
+          bunx playwright@1.63.0 --version
+          ls -la "$HOME/.cache/ms-playwright"
+          find "$HOME/.cache/ms-playwright" -type f -name chrome -o -name chromium
 
       - name: Render video
         working-directory: app
@@ -44,7 +51,13 @@ jobs:
           BROWSER_CHANNEL: chromium
         run: |
           mkdir -p ../out
-          bun scripts/render.ts video --samples auto --min-samples 4 --max-samples 12 --shutter 0.5 --crf 20 --out ../out/motion-as-code.mp4
+          bun scripts/render.ts video \
+            --samples auto \
+            --min-samples 4 \
+            --max-samples 12 \
+            --shutter 0.5 \
+            --crf 20 \
+            --out ../out/motion-as-code.mp4
 
       - name: Upload video
         if: success()
